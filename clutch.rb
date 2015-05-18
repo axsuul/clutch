@@ -1,42 +1,39 @@
 require 'rubygems'
 require 'bundler/setup'
 
-require 'active_support/all'
-require 'highline/import'
+require 'yaml'
 require 'pathname'
+require 'pty'
+require 'highline/import'
 
-# Defaults
-output_path = "/media/Ad Hoc"
-preset = "iPad"
+config = YAML.load_file('clutch.yml')
 
-puts "So you wanna convert videos, eh?"
-puts "---"
-
-video_paths = []
-
-loop do
-  video_path = ask("Path to video? (blank for no more)")
-
-  break if video_path.blank?
-
-  video_paths << video_path
-end
+video_paths = config['video_paths']
+output_path = config['output_path']
+output_extension = config['output_extension']
+preset = config['preset']
 
 videos_count = video_paths.count
 
-puts "Ok! So we have #{videos_count} videos!"
+puts "Ok! So we have #{videos_count} videos which will be converted to .#{output_extension} using the #{preset} preset! The converted videos will then be found in #{output_path}!"
+puts "\n"
 
-output_path = ask("Output path? ") { |q| q.default = output_path }
-preset = ask("Preset? ") { |q| q.default = preset }
+video_paths.each do |path|
+  puts path
+end
+
+puts "\n"
+
+permission = ask("Let's get ready to vroom vroom? (y/n) ") { |q| q.validate = /y|n/ }
 
 video_paths.each do |path|
   pathname = Pathname.new(path) 
   basename = pathname.basename(".*")
-  command = %Q{HandBrakeCLI --preset "#{preset}" \--input "#{path}" \--output "#{output_path}/#{basename}.mp4"}
+  command = %Q{HandBrakeCLI --preset "#{preset}" \--input "#{path}" \--output "#{output_path}/#{basename}.#{output_extension}"}
 
   puts "Converting #{path}..."
 
-  `#{command}`
+  system(command)
 
   puts "Finished #{path}!"
 end

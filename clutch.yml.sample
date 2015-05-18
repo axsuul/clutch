@@ -1,0 +1,8 @@
+# Edit as you need
+video_paths:
+  - "/path/to/video"
+  - "/another/video"
+
+output_path: "/output"
+output_extension: mp4
+preset: iPad
