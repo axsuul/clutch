@@ -26,6 +26,11 @@ puts "\n"
 
 permission = ask("Vroom vroom? (y/n) ") { |q| q.validate = /y|n/ }
 
+if permission == "n"
+  puts "Come back when you're ready."
+  exit
+end
+
 def puts_separator
   puts "-------------------------------------"
   puts "*************************************"
