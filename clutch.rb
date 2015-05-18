@@ -24,18 +24,30 @@ end
 
 puts "\n"
 
-permission = ask("Let's get ready to vroom vroom? (y/n) ") { |q| q.validate = /y|n/ }
+permission = ask("Vroom vroom? (y/n) ") { |q| q.validate = /y|n/ }
 
-video_paths.each do |path|
+def puts_separator
+  puts "-------------------------------------"
+  puts "*************************************"
+  puts "-------------------------------------"
+end
+
+video_paths.each_with_index do |path, i|
+  job = "(#{i+1}/#{videos_count})" 
+
   pathname = Pathname.new(path) 
   basename = pathname.basename(".*")
   command = %Q{HandBrakeCLI --preset "#{preset}" \--input "#{path}" \--output "#{output_path}/#{basename}.#{output_extension}"}
 
-  puts "Converting #{path}..."
+  puts_separator
+  puts "#{job} Converting #{path}..."
+  puts_separator
 
   system(command)
 
-  puts "Finished #{path}!"
+  puts_separator
+  puts "#{job} Finished #{path}!"
+  puts_separator
 end
 
 puts "Woohoo!"
